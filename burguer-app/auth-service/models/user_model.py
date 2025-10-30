@@ -4,11 +4,10 @@ Este módulo contém a função de serialização para o modelo de usuário.
 
 def serialize_user(user):
 
-    """Serializa um dicionário de usuário para um formato específico.
-    Args:
-        user (dict): Dicionário contendo os dados do usuário.
+    """Serializa um objeto de usuário em um dicionário.
+
     Returns:
-        dict: Dicionário serializado com campos específicos.
+        dict: Dicionário contendo os dados do usuário.
     """
     return {
         "email": user.get("email"),
