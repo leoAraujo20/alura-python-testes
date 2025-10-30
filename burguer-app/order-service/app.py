@@ -18,6 +18,11 @@ app.register_blueprint(order_bp, url_prefix="/order")
 # Redireciona a rota raiz para a lista de pedidos
 @app.route("/")
 def index():
+    """Rota raiz da aplicação
+
+    Returns:
+        redirect: Redireciona para uma nova url
+    """    
     return redirect(url_for("order.list_orders"))
 
 
