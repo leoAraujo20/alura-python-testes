@@ -25,7 +25,7 @@ def test_serialize_user_complete_data():
     assert serialized == expected
 
 
-def test_serialize_user_partial_data():
+def test_serialize_user_missing_optional_fields():
     user = {"email": "test@example.com", "name": "Test User"}
     serialized = serialize_user(user)
     expected = {
