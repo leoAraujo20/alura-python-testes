@@ -1,9 +1,11 @@
-import pytest
-from pymongo import MongoClient
 import os
+
+import pytest
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 load_dotenv()
+
 
 @pytest.fixture(scope="session")
 def mongo_client():
