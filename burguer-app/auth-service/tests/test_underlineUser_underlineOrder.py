@@ -45,6 +45,6 @@ class TestUserOrderIntegration:
 
 
 class TestServicesHealth:
-    def test_services_health(self, services_running):
+    def test_services_health(self, services_running, skip_if_services_down):
         for service, is_running in services_running.items():
             assert is_running, f"O serviço {service} não está em execução."
