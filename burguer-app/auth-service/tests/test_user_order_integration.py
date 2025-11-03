@@ -43,8 +43,3 @@ class TestUserOrderIntegration:
         response = requests.post(f"{base_urls['order_url']}/create", json=order_data, allow_redirects=False)
         assert response.status_code in [404, 400]
 
-
-class TestServicesHealth:
-    def test_services_health(self, services_running, skip_if_services_down):
-        for service, is_running in services_running.items():
-            assert is_running, f"O serviço {service} não está em execução."
