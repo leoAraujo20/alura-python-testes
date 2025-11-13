@@ -41,7 +41,35 @@ jobs:
       - name: waiting for mongo to be ready
         run: |
           sleep 20
-        
+
+      - name: Test auth-service
+        working-directory: burguer-app/auth-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pytest -v
+
+      - name: Test user-service
+        working-directory: burguer-app/user-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pytest -v
+
+      - name: Test order-service
+        working-directory: burguer-app/order-service
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pytest -v
+
+      - name: Test product-service
+        working-directory: burguer-app/product-service
+        run: |
+          python -m pip install --upgrade pip 
+          pip install -r requirements.txt
+          pytest -v
+
       - name: Shut down Docker Compose services
         working-directory: burguer-app
         run: |
