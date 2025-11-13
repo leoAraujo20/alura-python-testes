@@ -1,0 +1,48 @@
+name: Docker Development Environment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docker-up:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Install Docker Compose
+        run: |
+          if ! command -v docker-compose &> /dev/null; then
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
+          docker-compose --version
+
+      - name: Create .env for each service
+        working-directory: burguer-app
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > auth-service/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > user-service/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > order-service/.env
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > product-service/.env
+      
+      - name: Start Docker Compose services
+        run: |
+          docker-compose -f burguer-app/docker-compose.yml -f burguer-app/docker-compose.override.yml up -d --build
+
+      - name: waiting for mongo to be ready
+        run: |
+          sleep 20
+        
+      - name: Shut down Docker Compose services
+        working-directory: burguer-app
+        run: |
+          docker-compose down
