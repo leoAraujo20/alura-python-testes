@@ -1,0 +1,38 @@
+name: Build and publish Docker images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:2.0 ./burguer-app/auth-service
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:2.0 ./burguer-app/order-service
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:2.0 ./burguer-app/product-service
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:2.0 ./burguer-app/user-service
+      
+      - name: Push Docker images
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:2.0
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:2.0
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:2.0
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:2.0
+
+        
+
+      
