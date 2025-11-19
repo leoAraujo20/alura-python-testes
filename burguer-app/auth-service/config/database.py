@@ -1,5 +1,3 @@
-"""Conecta ao  banco de dados MongoDB utilizando as variáveis de ambiente"""
-
 import os
 
 from dotenv import load_dotenv
