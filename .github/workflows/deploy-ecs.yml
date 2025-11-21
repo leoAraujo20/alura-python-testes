@@ -1,0 +1,54 @@
+name: Deploy to ECS Fargate via Docker Hub
+
+on :
+  push:
+    branches:
+      - main 
+env:
+  AWS_REGION: us-east-1
+  ECS_CLUSTER: burguer-app-cluster
+  ECS_SERVICE: burguer-app-service
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      
+      - name: Build and push Docker images to Docker Hub
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest ./burguer-app/auth-service
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:{{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest ./burguer-app/order-service
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:{{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest ./burguer-app/product-service
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:{{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest ./burguer-app/user-service
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:{{ github.sha }}
+
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:{{ github.sha }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+        
+      - name: Force new deployment on ECS service
+        run: |
+          aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
