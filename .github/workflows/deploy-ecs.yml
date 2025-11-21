@@ -1,6 +1,6 @@
 name: Deploy to ECS Fargate via Docker Hub
 
-on :
+on:
   push:
     branches:
       - main 
@@ -25,22 +25,22 @@ jobs:
       - name: Build and push Docker images to Docker Hub
         run: |
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest ./burguer-app/auth-service
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:{{ github.sha }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:${{ github.sha }}
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest ./burguer-app/order-service
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:{{ github.sha }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:${{ github.sha }}
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest ./burguer-app/product-service
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:{{ github.sha }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:${{ github.sha }}
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest ./burguer-app/user-service
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:{{ github.sha }}
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:${{ github.sha }}
 
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/auth-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/order-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/product-service:${{ github.sha }}
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:{{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/user-service:${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5.1.0
